@@ -55,6 +55,7 @@ int main() {
 	
 	accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	printf("Client connected\n");
+	send(server_fd, "+PONG\r\n", 6, 0);
 	
 	close(server_fd);
 
