@@ -56,13 +56,14 @@ int main() {
 int client_fd=	accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	printf("Client connected\n");
 	const char *response = "+PONG\r\n";
-	const buffer[1024];
+	const void buffer[1024];
 	while(true){
 		ssize_t bytes_read = read(client_fd,buffer,sizeof(buffer));
 		if(bytes_read==0){
 			break;
 		}else if(bytes_read==-1){
-			return fprintf(stderr,"error reading from client");
+		fprintf(stderr,"error reading from client");
+		break;
 		}
 		send(client_fd,response,strlen(response), 0);
 	}
