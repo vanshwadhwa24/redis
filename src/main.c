@@ -6,13 +6,14 @@
 #include <string.h>
 #include <errno.h>
 #include <unistd.h>
+#include <pthread.h>
 
 void *handle_client(void *arg){
 	int client_fd = *(int *)arg;
 	free(arg);
 	const char *response = "+PONG\r\n";
 	char buffer[1024];
-	while(true){
+	while(1){
 		ssize_t bytes_read = read(client_fd,buffer,sizeof(buffer));
 		if(bytes_read==0){
 			break;
@@ -82,8 +83,8 @@ int main() {
 	*fd=client_fd;
 
 		pthread_create(&tid, NULL, handle_client,fd );
-		close(client_fd);
-free(fd);
+// 		close(client_fd);
+// free(fd);
 		printf("Client connected\n");
 	
 }
