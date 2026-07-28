@@ -7,6 +7,23 @@
 #include <errno.h>
 #include <unistd.h>
 
+void *handle_client(void *arg){
+	int client_fd = *(int *)arg;
+	const char *response = "+PONG\r\n";
+	char buffer[1024];
+	while(true){
+		ssize_t bytes_read = read(client_fd,buffer,sizeof(buffer));
+		if(bytes_read==0){
+			break;
+		}else if(bytes_read==-1){
+			fprintf(stderr,"error reading from client");
+			break;
+		}
+		send(client_fd,response,strlen(response), 0);
+	}
+	return NULL;
+	}
+
 int main() {
 	// Disable output buffering
 	setbuf(stdout, NULL);
@@ -52,21 +69,18 @@ int main() {
 	
 	printf("Waiting for a client to connect...\n");
 	client_addr_len = sizeof(client_addr);
-	
-int client_fd=	accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
-	printf("Client connected\n");
-	const char *response = "+PONG\r\n";
-	char buffer[1024];
+
 	while(true){
-		ssize_t bytes_read = read(client_fd,buffer,sizeof(buffer));
-		if(bytes_read==0){
-			break;
-		}else if(bytes_read==-1){
-		fprintf(stderr,"error reading from client");
-		break;
-		}
-		send(client_fd,response,strlen(response), 0);
-	}
+
+		int client_fd=	accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
+	int *fd = malloc(sizeof(int)) ;
+	*fd=client_fd;
+
+		pthread_create(&tid, NULL, handle_client,&fd );
+free(fd);
+		printf("Client connected\n");
+	
+}
 	
 	close(server_fd);
 
