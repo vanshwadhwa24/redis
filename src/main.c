@@ -9,6 +9,7 @@
 
 void *handle_client(void *arg){
 	int client_fd = *(int *)arg;
+	free(arg);
 	const char *response = "+PONG\r\n";
 	char buffer[1024];
 	while(true){
@@ -19,8 +20,12 @@ void *handle_client(void *arg){
 			fprintf(stderr,"error reading from client");
 			break;
 		}
-		send(client_fd,response,strlen(response), 0);
+		 if (send(client_fd, response, strlen(response), 0) == -1) {
+            fprintf(stderr, "Error sending response\n");
+            break;
+        }
 	}
+	close(client_fd);
 	return NULL;
 	}
 
@@ -69,14 +74,15 @@ int main() {
 	
 	printf("Waiting for a client to connect...\n");
 	client_addr_len = sizeof(client_addr);
-
+	pthread_t tid;
 	while(true){
 
 		int client_fd=	accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	int *fd = malloc(sizeof(int)) ;
 	*fd=client_fd;
 
-		pthread_create(&tid, NULL, handle_client,&fd );
+		pthread_create(&tid, NULL, handle_client,fd );
+		close(client_fd);
 free(fd);
 		printf("Client connected\n");
 	
