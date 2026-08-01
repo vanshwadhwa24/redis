@@ -8,6 +8,8 @@
 #include <unistd.h>
 #include <pthread.h>
 
+		
+
 void *handle_client(void *arg){
 	int client_fd = *(int *)arg;
 	free(arg);
@@ -21,6 +23,8 @@ void *handle_client(void *arg){
 			fprintf(stderr,"error reading from client");
 			break;
 		}
+		
+
 		 if (send(client_fd, response, strlen(response), 0) == -1) {
             fprintf(stderr, "Error sending response\n");
             break;
@@ -40,7 +44,7 @@ int main() {
 
 	// Uncomment the code below to pass the first stage
 	
-	int server_fd, client_addr_len;
+	int server_fd, client_addr_len;	
 	struct sockaddr_in client_addr;
 	
 	server_fd = socket(AF_INET, SOCK_STREAM, 0);
