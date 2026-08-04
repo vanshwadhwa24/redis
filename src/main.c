@@ -22,86 +22,54 @@ void *handle_client(void *arg){
 		}else if(bytes_read==-1){
 			fprintf(stderr,"error reading from client");
 			break;
-		}
-			
-
-		 
+		}	 
 		 char *response_array[20];
-int idx = 0;
-int i = 0;
+  		 int idx = 0;
+		 int i = 0;
 
-while (buffer[i] != '\0') {
-
-    
-    if (buffer[i] == '*') {
-
-        i++;    
-
-       
+		while (buffer[i] != '\0') {
+    			if (buffer[i] == '*') {
+       			 i++;    
         int num_of_args = 0;
         while (buffer[i] != '\r') {
             num_of_args = num_of_args * 10 + (buffer[i] - '0');
             i++;
         }
-
         i += 2;      
-
         while (num_of_args--) {
-
-          
             if (buffer[i] != '$')
                 break;
-
             i++;
-
             int len = 0;
             while (buffer[i] != '\r') {
                 len = len * 10 + (buffer[i] - '0');
                 i++;
             }
-
             i += 2;     
-
             char *s = malloc(len + 1);
-
             for (int j = 0; j < len; j++)
                 s[j] = buffer[i++];
-
             s[len] = '\0';
-
             response_array[idx++] = s;
-
             i += 2;    
         }
-
         break;
     }
-
-   
     else if (buffer[i] == '$') {
-
         i++;
-
         int len = 0;
         while (buffer[i] != '\r') {
             len = len * 10 + (buffer[i] - '0');
             i++;
         }
-
         i += 2;
-
         char *s = malloc(len + 1);
-
         for (int j = 0; j < len; j++)
             s[j] = buffer[i++];
-
         s[len] = '\0';
-
         response_array[idx++] = s;
-
         i += 2;
     }
-
     else {
         break;
     }
